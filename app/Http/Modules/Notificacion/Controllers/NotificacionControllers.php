@@ -29,8 +29,8 @@ class NotificacionControllers extends Controller
             return response()->json($notificaciones, Response::HTTP_OK);
         } catch (\Throwable $th) {
             return response()->json([
-                $th->getMessage(),
-                'mensaje' => 'Ha ocurrido un error al buscar las notificaciones'
+                // $th->getMessage(),
+                // 'mensaje' => 'Ha ocurrido un error al buscar las notificaciones'
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
