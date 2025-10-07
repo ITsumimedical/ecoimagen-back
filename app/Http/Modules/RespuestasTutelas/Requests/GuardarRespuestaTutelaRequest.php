@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Http\Modules\RespuestasTutelas\Requests;
+
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
+
+class GuardarRespuestaTutelaRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     *
+     * @return bool
+     */
+    public function authorize()
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    public function rules()
+    {
+        return [
+            'respuesta' => 'nullable|string',
+            'tipo_respuesta', 'nullable|string',
+            'actuacion_tutela_id' => 'nullable',
+            'user_id' => 'nullable',
+            'adjuntos' => 'nullable'
+        ];
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json($validator->errors(), 422));
+    }
+}

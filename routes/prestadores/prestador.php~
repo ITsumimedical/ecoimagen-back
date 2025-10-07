@@ -1,0 +1,33 @@
+<?php
+
+use App\Http\Modules\Prestadores\Controllers\PrestadorController;
+use Illuminate\Support\Facades\Route;
+
+Route::prefix('prestador')->group( function () {
+    Route::controller(PrestadorController::class)->group(function (){
+        Route::post('listar','listar'); //->middleware('permission:prestador.listar');
+        Route::get('contratoActivo','contratoActivo'); //->middleware('permission:prestador.listar');
+        Route::post('','crear'); //->middleware('permission:prestador.crear');
+        Route::put('/{prestador}','actualizar'); //->middleware('permission:prestador.actualizar');
+        Route::put('cambiar-estado/{prestador}','cambiarEstado'); //->middleware('permission:prestador.actualizar');
+        Route::get('/consultar/{id}','consultar'); //->middleware('permission:prestador.listar');
+        Route::post('listarConfiltro','listarConfiltro'); //->middleware('permission:prestador.listar');
+        Route::post('listarExternos','listarExternos'); //->middleware('permission:prestador.listar');
+        Route::post('listarInternos','listarInternos'); //->middleware('permission:prestador.listar');
+        Route::get('listarPrestadoresContratados', 'listarPrestadoresContratados'); //->middleware('permission:prestador.listar');
+        Route::post('buscarPrestador', 'buscarPrestador');
+        Route::get('prestadoresContrato', 'prestadoresContrato');
+        Route::get('/', 'listarPrestadores');
+        Route::get('tiene-contrato/{prestador_id}', 'tieneContratoPrestador');
+
+        // rutas con cuentas medicas
+        Route::post('acumuladoPrestador','acumuladoPrestador');//->middleware('permission:cuentasMedicas.acumuladoPrestador');
+        Route::post('misAsignadas','misAsignadas');//->middleware('permission:cuentasMedicas.misAsignadas');
+        Route::post('auditados','auditados');//->middleware('permission:cuentasMedicas.auditados');
+        Route::post('auditoriaFinal','auditoriaFinal');//->middleware('permission:cuentasMedicas.auditoriaFinal');
+        Route::post('conciliadasAuditoriaFinal','conciliadasAuditoriaFinal');//->middleware('permission:cuentasMedicas.conciliadasAuditoriaFinal');
+        Route::post('consiliadasConSaldo','consiliadasConSaldo');//->middleware('permission:cuentasMedicas.consiliadasConSaldo');
+        Route::post('auditoriaFinalCerradas','auditoriaFinalCerradas');//->middleware('permission:cuentasMedicas.auditoriaFinalCerradas');
+
+    });
+});

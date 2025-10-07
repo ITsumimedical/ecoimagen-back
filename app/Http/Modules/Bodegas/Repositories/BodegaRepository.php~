@@ -1,0 +1,284 @@
+<?php
+
+namespace App\Http\Modules\Bodegas\Repositories;
+
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Rap2hpoutre\FastExcel\FastExcel;
+use App\Http\Modules\Bases\RepositoryBase;
+use App\Http\Modules\Usuarios\Models\User;
+use App\Http\Modules\Bodegas\Models\Bodega;
+use App\Http\Modules\Ordenamiento\Models\Orden;
+use App\Http\Modules\Medicamentos\Models\Codesumi;
+use App\Http\Modules\Medicamentos\Models\Medicamento;
+use App\Http\Modules\Movimientos\Models\DetalleMovimiento;
+use App\Http\Modules\Medicamentos\Models\BodegaMedicamento;
+use App\Http\Modules\InventarioFarmacia\Models\InventarioFarmacia;
+use App\Http\Modules\Movimientos\Models\Movimiento;
+use PhpParser\Node\Expr\AssignOp\Concat;
+
+class BodegaRepository extends RepositoryBase
+{
+    protected $bodegaModel;
+
+    public function __construct(){
+
+        $this->bodegaModel = new Bodega();
+        parent::__construct($this->bodegaModel);
+    }
+
+    public function inventarioBodega($data){
+        $inventario = BodegaMedicamento::select('bodegas.nombre','bodega_medicamentos.id as bodegaMedicamento',
+        'bodega_medicamentos.bodega_id','bodega_medicamentos.medicamento_id','bodega_medicamentos.cantidad_total','lotes.cantidad','lotes.id as lote',
+        'lotes.fecha_vencimiento','lotes.codigo')
+        ->selectRaw('(select precio_unidad from precio_proveedor_medicamentos where precio_proveedor_medicamentos.medicamento_id = bodega_medicamentos.medicamento_id LIMIT 1) as precio_unidad')
+        ->join('bodegas','bodega_medicamentos.bodega_id','bodegas.id')
+        ->join('lotes','lotes.bodega_medicamento_id','bodega_medicamentos.id')
+        ->with(['medicamento','medicamento.invima:cum_validacion,titular,descripcion_comercial,producto','medicamento.codesumi:id,nombre,codigo'])
+        ->where('lotes.cantidad', '>', 0)
+        ->where('bodegas.estado_id',1);
+        if($data['bodega_id']!= 0){
+            $inventario->where('bodega_medicamentos.bodega_id',$data['bodega_id']);
+        }
+        return $inventario->get();
+    }
+
+    public function articulosBodega($data){
+
+        return Codesumi::select(['codesumis.', 'da.'])
+        ->join('medicamentos as da', 'da.codesumi_id', 'codesumis.id')
+        ->join('bodega_medicamentos as ba', 'ba.medicamento_id', 'da.id')
+        ->whereNotNull('codesumis.codigo')
+        ->whereNotNull('codesumis.requiere_autorizacion')
+        ->whereNotNull('codesumis.nivel_ordenamiento')
+        ->where('ba.bodega_id', $data['bodega_id'])
+        ->where('codesumis.nombre', 'ILIKE', '%' . $data['nombre'] . '%')
+        ->where('codesumis.estado_id', 1)
+        ->distinct()
+        ->count();
+    }
+
+    public function actualizarBodega($data,$id){
+        $bodega = $this->bodegaModel::find($id);
+        return $bodega->update([
+            'nombre' => $data['nombre'],
+            'municipio_id' => $data['municipio_id'],
+            'tipo_bodega_id' => $data['tipo_bodega_id'],
+            'telefono' => $data['telefono'],
+            'direccion' => $data['direccion'],
+            'hora_inicio' => $data['hora_inicio'],
+            'hora_fin' => $data['hora_fin'],
+            'stock_seguridad' => $data['stock_seguridad'],
+            'tiempo_reposicion' => $data['tiempo_reposicion'],
+            'cobertura' => $data['cobertura'],
+          ]);
+
+    }
+
+    public function listarCodesumi($request){
+        $consulta =  Codesumi::whereNombreOrCodigo($request);
+        return $consulta->get();
+    }
+
+    public function kardex($data){
+
+        $bodega_id = $data['bodega_id'];
+        $codigo = $data['codigo'];
+        $fechaDesde = $data['fechaDesde'];
+        $fechaHasta = $data['fechaHasta'];
+        $factura = $data['factura'] ?? null;
+
+        $kardexQuery = Movimiento::select(
+            'b.nombre AS bodega',
+            DB::raw("CONCAT(op.nombre,' ',op.apellido) as Responsable"),
+            'movimientos.codigo_factura AS codigo_factura',
+            'movimientos.orden_id',
+            'movimientos.solicitud_bodega_id',
+            'movimientos.created_at AS creacion_movimiento',
+            'tm.nombre AS transaccion',
+            'dm.movimiento_id',
+            'dm.cantidad_solicitada AS cantidad_solicitada',
+            'dm.cantidad_final AS cantidad_final',
+            'dm.cantidad_anterior AS cantidad_anterior',
+            'dm.precio_unidad AS precio_unidad',
+            'dm.valor_total AS valor_total',
+            'dm.valor_promedio AS valor_promedio',
+            'lt.codigo AS numero_lote',
+            'lt.fecha_vencimiento',
+            'cs.nombre AS medicamento',
+            'b1.nombre AS bodega_origen',
+            'b2.nombre AS bodega_destino'
+        )
+        ->JOIN('tipo_movimientos as tm', 'tm.id', 'movimientos.tipo_movimiento_id')
+        ->JOIN('detalle_movimientos as dm', 'dm.movimiento_id','movimientos.id')
+        ->JOIN('bodega_medicamentos as bm', 'bm.id', 'dm.bodega_medicamento_id')
+        ->JOIN('medicamentos as md','md.id','bm.medicamento_id')
+        ->JOIN('bodegas as b', 'b.id' , 'bm.bodega_id')
+        ->JOIN('codesumis as cs', 'cs.id', 'md.codesumi_id')
+        ->JOIN('operadores as op','op.user_id','movimientos.user_id')
+        ->LEFTJOIN('bodegas as b1', 'b1.id', 'movimientos.bodega_origen_id')
+        ->LEFTJOIN('bodegas as b2', 'b2.id', 'movimientos.bodega_destino_id')
+        ->LEFTJOIN('lotes as lt', 'lt.id', 'dm.lote_id')
+        ->where('cs.estado_id',1)
+        ->whereIn('md.estado_id',[1,11])
+        ->orderBy('movimientos.created_at');
+
+        if ($factura) {
+            $kardexQuery->where('movimientos.solicitud_bodega_id', $factura);
+        } else {
+            $kardexQuery->WHEREBETWEEN('movimientos.created_at', [$fechaDesde, $fechaHasta])
+                ->where('b.id', $bodega_id);
+        }
+        if($codigo){
+            $kardexQuery->where('cs.codigo', $codigo);
+        }
+
+        $kardex = $kardexQuery->get();
+
+        return ['kardex' => $kardex];
+    }
+
+
+    public function minMax($data){
+        $dispensados = Medicamento::select([
+            'm.codigosumi as Codigo',
+            'm.producto',
+            'm.6 as v6',
+            'm.5 as v5',
+            'm.4 as v4',
+            'm.3 as v3',
+            'm.2 as v2',
+            'm.1 as v1',
+            DB::raw('SUM(ba.cantidad_total) AS actual'),
+            'medicamentos.critico',
+            'medicamentos.abc'
+        ])
+            ->join('codesumis as cs','cs.id','medicamentos.codesumi_id')
+            ->join('min_max as m','m.codigosumi','cs.codigo')
+            ->join('bodega_medicamentos as ba','ba.medicamento_id','medicamentos.id')
+            ->where('m.bodega_id',$data['bodega'])
+            ->where('ba.bodega_id',$data['bodega'])
+            ->groupBy('m.codigosumi','m.producto','m.bodega_id','m.bodega_nombre','m.6','m.5','m.4','m.3','m.2','m.1','medicamentos.critico','medicamentos.abc')
+            ->get()->toArray();
+
+        $totalDispensados = array_reduce($dispensados, function($suma, $item)
+        {
+            return ($item["v6"]+$item["v5"]+$item["v4"]+$item["v3"]+$item["v2"]+$item["v1"]);
+        });
+
+
+        return ["dispensados"=>$dispensados,'total_dispensados'=>intval($totalDispensados)];
+    }
+
+    public function exportar($datos){
+        $appointments = collect($datos);
+        $array = json_decode($appointments, true);
+        return (new FastExcel($array))->download('file.xls');
+    }
+
+    public function detallesCodesumisReposicion($data){
+        return Medicamento::select([
+            'medicamentos.id',
+            'c.nombre',
+            'cums.producto',
+            'c.codigo',
+            'cums.titular',
+            'bd.cantidad_total',
+            'bd.id as bodega_medicamento_id'
+        ])
+            ->join('codesumis as c','c.id','medicamentos.codesumi_id')
+            ->join('bodega_medicamentos as bd','bd.medicamento_id','medicamentos.id')
+            ->join('cums','cums.cum_validacion','medicamentos.cum')
+            ->where('c.codigo',$data['codigo'])
+            ->where('bd.bodega_id',$data['bodega'])
+            ->get();
+    }
+
+    public function usuarioDispensa($data){
+        return User::select([DB::raw("CONCAT(operadores.nombre,' ',operadores.apellido) as nombre"),'users.id as usuarioId'])
+        ->join('operadores','operadores.user_id','users.id')
+        ->where('users.activo',true)
+        ->whereIn("users.id",function ($query) use ($data) {
+            $query->select('user_id')
+                ->from('movimientos')
+                ->where('tipo_movimiento_id',5)
+                ->where('bodega_origen_id',$data['bodega_origen_id'])
+                ->distinct();
+        })->get();
+
+    }
+
+    public function historicoDispensado($data){
+        // return $data;
+        $objDispensado = Orden::select('p.numero_documento', 'operadores.nombre', 'operadores.apellido',
+        DB::raw("CONCAT(p.segundo_apellido,' ',p.primer_apellido,' ',p.primer_nombre,' ',p.segundo_nombre) as paciente"),
+        'ordenes.id AS Orden_id','m.id as movimiento')
+        ->join('movimientos as m','ordenes.id','m.orden_id')
+        ->join('consultas as cp','cp.id','ordenes.consulta_id')
+        ->join('afiliados as p','p.id','cp.afiliado_id')
+        ->join('users as u', 'm.user_id', 'u.id')
+        ->join('operadores','operadores.user_id','u.id')
+        ->where('m.bodega_origen_id', $data['bodega_origen_id']['id'])
+        ->where('m.tipo_movimiento_id', 5)
+        ->whereBetween('m.created_at', [$data['fecha_inicio'].' 00:00:00.000', $data['fecha_final'].' 23:59:59.999']);
+        if($data['usuario_id']){
+            $objDispensado->where('m.user_id',$data['usuario_id']);
+        }
+    return $objDispensado->distinct()->get();
+
+    }
+
+    public function historicoDispensadoDetalle($data){
+        $detalle = DetalleMovimiento::select(['detalle_movimientos.id','detalle_movimientos.created_at','detalle_movimientos.cantidad_anterior',
+        'detalle_movimientos.cantidad_final', 'detalle_movimientos.movimiento_id', 'lo.codigo', 'da.cum', 'cums.producto'])
+                    ->join('lotes as lo', 'detalle_movimientos.lote_id', 'lo.id')
+                    ->join('bodega_medicamentos as ba', 'detalle_movimientos.bodega_medicamento_id', 'ba.id')
+                    ->join('medicamentos as da', 'ba.medicamento_id', 'da.id')
+                    ->join('cums','cums.cum_validacion','da.cum')
+                    ->join('movimientos as m','m.id','detalle_movimientos.movimiento_id')
+                    ->where('ba.bodega_id', $data['bodega_origen_id']['id'])
+                    ->where('m.orden_id',$data['orden'])
+                    ->whereBetween('m.created_at', [$data['fecha_inicio'].' 00:00:00.000', $data['fecha_final'].' 23:59:59.999']);
+            if($data['usuario_id']){
+                $detalle->where('m.user_id',$data['usuario_id']);
+            }
+        ;
+        return response()->json($detalle->get());
+
+    }
+
+    public function listarBodega(){
+        return $this->bodegaModel::select('bodegas.id','bodegas.municipio_id','bodegas.tipo_bodega_id','bodegas.cobertura',
+        'bodegas.tiempo_reposicion','bodegas.stock_seguridad','bodegas.hora_fin','bodegas.hora_inicio','bodegas.telefono',
+        'bodegas.direccion','bodegas.updated_at','bodegas.created_at','bodegas.estado_id','bodegas.nombre','estados.nombre as estadoNombre',
+        'tipo_bodegas.nombre as tipoBodega','municipios.nombre as nombreMUnicipio')->leftjoin('municipios','municipios.id','bodegas.municipio_id')
+        ->leftjoin('tipo_bodegas','tipo_bodegas.id','bodegas.tipo_bodega_id')
+        ->leftjoin('estados','estados.id','bodegas.estado_id')->with('user')->where('bodegas.estado_id',1)->get();
+    }
+
+    public function actualizarEstado($data,$id){
+        $bodega = $this->bodegaModel::find($id);
+        return $bodega->update([
+            'estado_id' => $data['estado_id'],
+          ]);
+    }
+
+    public function agregarPersonal($data){
+        $bodega = $this->bodegaModel::find($data['bodega_id']);
+        // Filtrar usuarios ya asociados para evitar errores
+        $bodega->user()->attach($data['usuarios']);
+
+    }
+
+    public function listarBodegasUsuario(){
+        return $this->bodegaModel::whereHas('user', function($query) {
+            $query->where('user_id', Auth::id());
+        })->with(['user' => function($query) {
+            $query->with('operador');
+        }])->get();
+    }
+
+    public function listarPorEstado($estado_id){
+        return $this->bodegaModel::where('estado_id', $estado_id)->get();
+    }
+}

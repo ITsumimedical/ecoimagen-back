@@ -1,0 +1,16 @@
+<?php
+
+use App\Http\Modules\ProgramasFarmacia\Controllers\ProgramasFarmaciaController;
+use Illuminate\Support\Facades\Route;
+
+Route::prefix('programa-farmacia', 'throttle:60,1')->group(function () {
+    Route::controller(ProgramasFarmaciaController::class)->group(function () {
+        Route::get('listar', 'listar');
+        Route::post('crear', 'crear');
+        Route::put('actualizar/{id}', 'actualizar');
+        Route::put('cambiarEstado/{id}', 'cambiarEstado');
+        Route::post('asociar-diagnosticos/{programaId}', 'asociarDiagnosticos');
+        Route::get('listar-diagnosticos-programa/{programaId}', 'listarDiagnosticosPrograma');
+        Route::post('remover-diagnosticos/{programaId}', 'removerDiagnosticos');
+    });
+});

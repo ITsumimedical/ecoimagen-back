@@ -1,0 +1,31 @@
+<?php
+
+namespace App\Http\Modules\Adjuntos\Requests;
+
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
+
+class ArchivoDigitalRequest extends FormRequest
+{
+
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'nombre_archivo' => 'required|string',
+            'nombre_carpeta' => 'nullable|string',
+            'disco' => 'nullable|string',
+            'tiempo' => 'nullable|integer',
+        ];
+    }
+
+    protected function failedValidation(Validator $validator): void
+    {
+        throw new HttpResponseException(response()->json($validator->errors(), 422));
+    }
+}

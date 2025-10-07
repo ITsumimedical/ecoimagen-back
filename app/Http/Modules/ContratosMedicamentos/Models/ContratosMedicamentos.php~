@@ -1,0 +1,57 @@
+<?php
+
+namespace App\Http\Modules\ContratosMedicamentos\Models;
+
+use App\Http\Modules\Ambitos\Models\Ambito;
+use App\Http\Modules\Entidad\Models\Entidad;
+use App\Http\Modules\Estados\Models\Estado;
+use App\Http\Modules\Prestadores\Models\Prestador;
+use App\Http\Modules\Usuarios\Models\User;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class ContratosMedicamentos extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'prestador_id',
+        'entidad_id',
+        'ambito_id',
+        'fecha_inicio',
+        'fecha_vigencia',
+        'estado_id',
+        'creado_por',
+    ];
+
+    protected $casts = [
+        'fecha_inicio' => 'date',
+        'fecha_vigencia' => 'date',
+    ];
+
+    public function prestador(): BelongsTo
+    {
+        return $this->belongsTo(Prestador::class, 'prestador_id');
+    }
+
+    public function entidad(): BelongsTo
+    {
+        return $this->belongsTo(Entidad::class, 'entidad_id');
+    }
+
+    public function ambito(): BelongsTo
+    {
+        return $this->belongsTo(Ambito::class, 'ambito_id');
+    }
+
+    public function estado(): BelongsTo
+    {
+        return $this->belongsTo(Estado::class, 'estado_id');
+    }
+
+    public function creadoPor(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'creado_por');
+    }
+}

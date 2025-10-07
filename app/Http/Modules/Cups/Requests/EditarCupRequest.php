@@ -1,0 +1,36 @@
+<?php
+
+namespace App\Http\Modules\Cups\Requests;
+
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
+
+class EditarCupRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'genero' => 'required|string|in:A,M,F',
+            'edad_inicial' => 'required|integer|min:0',
+            'edad_final' => 'required|integer',
+            'archivo' => 'required|string|in:AC,AF,AP,AT',
+            'quirurgico' => 'required|boolean',
+            'ambito_id' => 'required|integer|exists:ambitos,id',
+            'modalidad_grupo_tec_sal_id' => 'required|integer|exists:modalidad_grupo_tec_sals,id',
+            'grupo_servicio_id' => 'required|integer|exists:grupo_servicios,id',
+            'codigo_servicio_id' => 'required|integer|exists:codigo_servicios,id',
+        ];
+    }
+
+    public function failedValidation(Validator $validator)
+    {
+        throw (new HttpResponseException(response()->json($validator->errors(), 422)));
+    }
+
+}

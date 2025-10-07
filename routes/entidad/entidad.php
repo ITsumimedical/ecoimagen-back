@@ -1,0 +1,20 @@
+<?php
+
+use App\Http\Modules\Entidad\Controllers\EntidadController;
+use Illuminate\Support\Facades\Route;
+
+Route::prefix('entidad')->group(function () {
+    Route::controller(EntidadController::class)->group(function () {
+        Route::get('listar', 'listarTodas'); //->middleware('permission:entidad.listar');
+        Route::post('listar', 'listar'); //->middleware('permission:entidad.listar');
+        Route::post('listarNoTiene', 'listarNoTiene'); //->middleware('permission:entidad.listar');
+        Route::post('', 'crear'); //->middleware('permission:entidad.crear');
+        Route::put('/{id}', 'actualizar'); //->middleware('permission:entidad.actualizar');
+        Route::get('/consultar/{id}', 'consultar'); //->middleware('permission:entidad.listar');
+        Route::post('buscar', 'buscar');
+        Route::get('validar/{entidad}/{accion}', 'validar');
+        Route::get('listarFomagFerroRips', 'listarFomagFerroRips'); //->middleware('permission:entidad.listar');
+        Route::get('listar-entidades-usuario', 'listarEntidadesUsuario');
+        Route::get('/listarEntidades', 'listar');
+    });
+});

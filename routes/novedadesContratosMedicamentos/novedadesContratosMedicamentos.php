@@ -1,0 +1,11 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Modules\ContratosMedicamentos\Controllers\NovedadesContratosMedicamentosController;
+
+Route::prefix('novedades-contratos-medicamentos', 'throttle:60,1')->group(function () {
+    Route::controller(NovedadesContratosMedicamentosController::class)->group(function () {
+        Route::get('listar-novedades-contrato', 'listarNovedadesContrato');
+        Route::get('listar-adjuntos-novedad/{novedadId}', 'listarAdjuntosNovedad');
+    });
+});
