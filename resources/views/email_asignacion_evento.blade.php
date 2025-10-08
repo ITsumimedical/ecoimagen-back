@@ -8,7 +8,7 @@
     <table width="600" align="center" style="background: #ffffff; border: 1px solid #ccc; padding: 20px;">
         <tr>
             <td align="center">
-                <img src="{{ url('/images/logo.png') }}" alt="Logo" width="120">
+                <img src="{{ url('/images/logoEcoimagen.png') }}" alt="Logo" width="120">
             </td>
         </tr>
         <tr>

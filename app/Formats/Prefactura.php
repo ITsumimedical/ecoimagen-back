@@ -22,7 +22,7 @@ class Prefactura extends Fpdf
 
     public function header()
     {
-        $logo = public_path() . "/images/v-logo.png";
+        $logo = public_path() . "/images/v-logoEcoimagen.png";
         $this->Image($logo, 10, 10, 30);
 
         // Encabezado

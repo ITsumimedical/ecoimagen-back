@@ -34,7 +34,7 @@ class Anexo9 extends FPDF
 
     public function body()
     {
-        $logo = public_path() . "/images/logo.png";
+        $logo = public_path() . "/images/logoEcoimagen.png";
         $this->Image($logo, 7, 9, -320);
 
         $this->SetFont('Arial', 'B', 9);

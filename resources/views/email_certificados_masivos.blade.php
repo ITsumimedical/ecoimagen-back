@@ -17,7 +17,7 @@
                     <tr>
                         <td align="center" bgcolor="#fff"
                             style="padding: 40px 0 30px 0; color: #153643; font-size: 28px; font-weight: bold; font-family: Arial, sans-serif;">
-                            <img src="{{url('/images/logo.png')}}" alt="Logo" width="300" height="230"
+                            <img src="{{url('/images/logoEcoimagen.png')}}" alt="Logo" width="300" height="230"
                                 style="display: block;" />
                         </td>
                     </tr>

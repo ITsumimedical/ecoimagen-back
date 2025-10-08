@@ -2586,7 +2586,7 @@ class FichaCovid extends Fpdf
         // elseif (self::$data["tipo"] === 'historia')
             $Y = 40;
             $pdf->SetFont('Arial', 'B', 9);
-            $logo = "/images/logo.png";
+            $logo = "/images/logoEcoimagen.png";
             $pdf->Image($logo, 155, 8, -220);
             $pdf->SetFont('Arial', '', 7);
             $pdf->SetXY(8, 37);
@@ -3688,7 +3688,7 @@ class FichaCovid extends Fpdf
 
             $Y = 40;
             $pdf->SetFont('Arial', 'B', 9);
-            $logo = "/images/logo.png";
+            $logo = "/images/logoEcoimagen.png";
             $pdf->Image($logo, 155, 8, -220);
             $pdf->SetXY(7,15);
             $pdf->SetDrawColor(0,0,0);

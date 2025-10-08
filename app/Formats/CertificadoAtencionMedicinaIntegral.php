@@ -35,7 +35,7 @@ class CertificadoAtencionMedicinaIntegral extends FPDF
         $this->SetTextColor(255, 192, 203);
         $this->SetTextColor(0, 0, 0);
 
-        $logo1 = public_path() . "/images/logo.png";
+        $logo1 = public_path() . "/images/logoEcoimagen.png";
         $logo2 = public_path() . "/images/medicinaIntegral.jpg";
         // if (self::$afiliado->entidad_id === 1) {
         //     $logo2 = public_path() . "/images/logoFomag.png";

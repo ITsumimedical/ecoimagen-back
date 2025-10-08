@@ -147,7 +147,7 @@ class ReciboCaja extends Fpdf
         $this->Rect($rectX, $rectY, $anchoRectangulo, $altoRectangulo);
         $anchoLogo1 = 30;
         $altoLogo1 = 15;
-        $logo1 = public_path() . "/images/logo.png";
+        $logo1 = public_path() . "/images/logoEcoimagen.png";
         $anchoLogo2 = 30;
         $altoLogo2 = 15;
 

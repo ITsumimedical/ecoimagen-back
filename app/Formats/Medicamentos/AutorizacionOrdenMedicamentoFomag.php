@@ -19,7 +19,7 @@ class AutorizacionOrdenMedicamentoFomag extends Fpdf
 
     public function Header()
     {
-        $logo1 = public_path("/images/logo.png");
+        $logo1 = public_path("/images/logoEcoimagen.png");
         $logo2 = null;
 
         if (isset($this->afiliado->entidad_id)) {

@@ -37,7 +37,7 @@ class TeleApoyo extends FPDF
         $this->Rect(5, 5, 200, 287);
         $this->SetDrawColor(0, 0, 0);
         $this->SetFont('Arial', 'B', 9);
-        $logo = public_path() . "/logo.png";
+        $logo = public_path() . "/logoEcoimagen.png";
         $this->Image($logo, 16, 9, -220);
         $this->SetFont('Arial', '', 7);
         $this->SetXY(8, 37);

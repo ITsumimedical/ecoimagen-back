@@ -116,7 +116,7 @@ class ConsentimientosInformados extends FPDF
         $anchoLogo = 37; // o el valor exacto que te funcione bien
         $altoLogo = 27;  // mantén proporción si es importante
 
-        $logo = public_path('images/logo.png'); // Logo por defecto
+        $logo = public_path('images/logoEcoimagen.png'); // Logo por defecto
 
         // Verificar si el médico tiene una sede asociada
         if (!empty(self::$medicoAtendio->sede)) {

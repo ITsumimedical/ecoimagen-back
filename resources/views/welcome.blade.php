@@ -606,7 +606,7 @@
     <div class="header">
         <div class="logo">
             <h1 style="color: peru">HORUS-HEALTH</h1>
-            {{-- <img src="images/v-logo.png" style="height: 59px;"> --}}
+            {{-- <img src="images/v-logoEcoimagen.png" style="height: 59px;"> --}}
         </div>
         <div class="nav">
             <ul>

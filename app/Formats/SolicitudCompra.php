@@ -35,7 +35,7 @@ class SolicitudCompra extends FPDF
 
     public function Body()
     {
-        $logo = public_path() . "/logo.png";
+        $logo = public_path() . "/logoEcoimagen.png";
         $this->Image($logo, 15, 8, -280);
         $this->SetXY(12, 10);
         $this->SetFont('Arial', 'B', 10);

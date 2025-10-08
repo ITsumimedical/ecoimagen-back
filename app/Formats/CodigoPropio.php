@@ -179,7 +179,7 @@ class CodigoPropio extends Fpdf
         $this->SetTextColor(0, 0, 0);
         $this->SetTextColor(0, 0, 0);
         $sedeProveedor = Rep::find(self::$afiliado->ips_id);
-        $logo1 = public_path() . "/images/logo.png";
+        $logo1 = public_path() . "/images/logoEcoimagen.png";
         if (self::$afiliado->entidad_id === 1) {
             $logo2 = public_path() . "/images/logoFomag.png";
         } elseif (self::$afiliado->entidad_id === 3) {

@@ -51,7 +51,7 @@ class MedicamentoIntrahospitalario extends Fpdf
         $this->Line($secondSeparatorX, $startY, $secondSeparatorX, $startY + $headerHeight);
 
         // Rutas de las imágenes
-        $logoSumi = 'images/logo.png';
+        $logoSumi = 'images/logoEcoimagen.png';
         $logoFomag = 'images/logoFomag.png';
 
         // Imagenes del primer cuadro 

@@ -22,7 +22,7 @@ Class ConsentimientoEmail extends Fpdf
     public function header()
     {
         $this->SetFont('Arial','B',12);//Tipo de letra,tamaño y negrilla del titulo
-        $logo ="/images/logo.png"; // logo
+        $logo ="/images/logoEcoimagen.png"; // logo
         $this->Image($logo, 22, 7, -213); //posicion en el eje X,Y y Tamaño
         $this->SetXY(40,15);
         $this->Cell(185,5,utf8_decode('CONSENTIMIENTO INFORMADO'),0,0,'C',0);

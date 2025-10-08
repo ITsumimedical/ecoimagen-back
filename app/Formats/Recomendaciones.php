@@ -48,7 +48,7 @@ class Recomendaciones extends Fpdf
 
         $Y = 14;
         $pdf->SetFont('Arial', 'B', 9);
-        $logo ="/images/logo.png";
+        $logo ="/images/logoEcoimagen.png";
         $pdf->Image($logo, 8, 7, -400);
         $pdf->SetXY(50, 10);
         $pdf->Cell(80, 4, utf8_decode('SUMIMEDICAL S.A.S'), 0, 0, 'C');

@@ -53,7 +53,7 @@ class CertificadoCitas extends FPDF
         $this->SetDrawColor(0, 0, 0);
 
         $this->SetFont('Arial', 'B', 9);
-        $logo = public_path() . "/images/logo.png";
+        $logo = public_path() . "/images/logoEcoimagen.png";
         $this->Image($logo, 16, 9, -220);
         $this->SetFont('Arial', '', 7);
         $this->SetXY(8, 37);

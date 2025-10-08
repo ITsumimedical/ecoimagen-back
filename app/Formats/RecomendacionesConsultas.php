@@ -28,7 +28,7 @@ class RecomendacionesConsultas extends Fpdf
             if (self::$consulta['afiliado']["entidad_id"] == 1) {
                 $logo = public_path() . "/images/logoFomag.png";
             } else {
-                $logo = public_path() . "/images/logo.png";
+                $logo = public_path() . "/images/logoEcoimagen.png";
             }
             $this->Image($logo, 8, 7, -470);
             $this->Rect(5, 5, 30, 22);

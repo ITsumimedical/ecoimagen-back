@@ -70,7 +70,7 @@ class Anexo1 extends Fpdf
 
 
         $this->SetFont('Arial', 'B', 9);
-        $logo = public_path() . "/images/logo.png";
+        $logo = public_path() . "/images/logoEcoimagen.png";
         $this->Image($logo, 18, 12, 25);
 
 

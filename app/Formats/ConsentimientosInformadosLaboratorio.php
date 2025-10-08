@@ -557,7 +557,7 @@ class ConsentimientosInformadosLaboratorio extends FPDF
         $this->Line(190, 5, 190, 35);
 
         // $logo = public_path() . "/logoFomag.png";
-        $logo = public_path('images/logo.png');
+        $logo = public_path('images/logoEcoimagen.png');
         $this->Image($logo, 24, 7, -240);
         $this->SetXY(73, 15);
         $this->MultiCell(68, 5, utf8_decode(self::$consentimientoC->nombre ?? ''), 0, 'C');

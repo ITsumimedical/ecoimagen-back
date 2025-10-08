@@ -131,7 +131,7 @@ class Medicamento extends Fpdf
         $this->SetTextColor(0, 0, 0);
 
         $repImagen = self::$ordenArticulo->rep_id ?? null;
-        $logo1 = public_path() . "/images/logo.png";
+        $logo1 = public_path() . "/images/logoEcoimagen.png";
         $logo2 = null;
         if ($repImagen) {
             $logoBD = LogosRepsHistoria::where('rep_id', $repImagen)->first();

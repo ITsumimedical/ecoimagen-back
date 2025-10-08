@@ -103,11 +103,11 @@ class HistoriaClinicaIntegralBase extends pdfProteccion
             $repId = $rep->id ?? null;
 
             if (!$repId) {
-                $this->Image(public_path("/images/logo.png"), 16, 9, 40, 25);
+                $this->Image(public_path("/images/logoEcoimagen.png"), 16, 9, 40, 25);
             } else {
                 $logo = LogosRepsHistoria::where('rep_id', $repId)->first();
                 if (!$logo || !Storage::disk('server37')->exists("logosRepsHistoria/{$logo->nombre_logo}")) {
-                    $this->Image(public_path("/images/logo.png"), 16, 9, 40, 25);
+                    $this->Image(public_path("/images/logoEcoimagen.png"), 16, 9, 40, 25);
                 } else {
                     $tempPath = null;
                     try {
@@ -126,7 +126,7 @@ class HistoriaClinicaIntegralBase extends pdfProteccion
                         ];
 
                         if (!$imageInfo || !array_key_exists($imageInfo['mime'], $tiposPermitidos)) {
-                            $this->Image(public_path("/images/logo.png"), 16, 9, 40, 25);
+                            $this->Image(public_path("/images/logoEcoimagen.png"), 16, 9, 40, 25);
                         } else {
                             $extension = $tiposPermitidos[$imageInfo['mime']];
                             $tempPath = storage_path("app/temp_logo_{$repId}.{$extension}");
@@ -135,11 +135,11 @@ class HistoriaClinicaIntegralBase extends pdfProteccion
                             try {
                                 $this->Image($tempPath, 16, 9, 40, 25);
                             } catch (\Exception $e) {
-                                $this->Image(public_path("/images/logo.png"), 16, 9, 40, 25);
+                                $this->Image(public_path("/images/logoEcoimagen.png"), 16, 9, 40, 25);
                             }
                         }
                     } catch (\Exception $e) {
-                        $this->Image(public_path("/images/logo.png"), 16, 9, 40, 25);
+                        $this->Image(public_path("/images/logoEcoimagen.png"), 16, 9, 40, 25);
                     } finally {
                         if ($tempPath && file_exists($tempPath)) {
                             unlink($tempPath);

@@ -1291,7 +1291,7 @@ class Anexos extends FPDF
             $this->MultiCell(30, 4, utf8_decode(''), 0, 'l');
         }
         if (self::$anexo['tipo'] === 'anexo9Referencia') {
-            // $logo = public_path(). "images/logo.png";
+            // $logo = public_path(). "images/logoEcoimagen.png";
             // $this->Image($logo, 7, 9, -320);
 
             // $this->SetFont('Arial', 'B', 9);
@@ -1567,7 +1567,7 @@ class Anexos extends FPDF
 
         /* if ($anexos == 'anexo9'){
 
-            $logo = public_path(). "images/logo.png";
+            $logo = public_path(). "images/logoEcoimagen.png";
             $this->Image($logo, 7, 9, -320);
 
             $this->SetFont('Arial', 'B', 9);

@@ -102,7 +102,7 @@ class MedicamentoDispensado extends Fpdf
             $logo2 = public_path() . "/images/logoFomag.png";
             $logo1 = public_path() . "/images/logo_ramedicas.png";
         } elseif (self::$afiliado->entidad_id === 3) {
-            $logo1 = public_path() . "/images/logo.png";
+            $logo1 = public_path() . "/images/logoEcoimagen.png";
             $logo2 = public_path() . "/images/logotipo_fps.jpg";
         }
 

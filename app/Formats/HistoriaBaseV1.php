@@ -64,7 +64,7 @@ class HistoriaBaseV1 extends Fpdf
         $pdf->SetDrawColor(0,0,0);
 
         $pdf->SetFont('Arial', 'B', 9);
-        $logo = "images/logo.png";
+        $logo = "images/logoEcoimagen.png";
         $pdf->Image($logo, 16, 9, -220);
         $pdf->SetFont('Arial', '', 7);
         $pdf->SetXY(8, 37);
@@ -388,7 +388,7 @@ class HistoriaBaseV1 extends Fpdf
             $logo = public_path() . "/images/victoriana.png";
             $pdf->Image($logo, 16, 9, -500);
         }else{
-            $logo = public_path() . "/images/logo.png";
+            $logo = public_path() . "/images/logoEcoimagen.png";
             $pdf->Image($logo, 16, 9, -220);
         }
 
@@ -1453,7 +1453,7 @@ class HistoriaBaseV1 extends Fpdf
     public function bodyHistoriaClinicaOncologia($pdf){
         #IMAGEN Y DATOS EMPRESARIALES
         $pdf->SetFont('Arial', 'B', 9);
-        $logo = public_path() . "/images/logo.png";
+        $logo = public_path() . "/images/logoEcoimagen.png";
         $pdf->Image($logo, 16, 9, -220);
         $pdf->SetFont('Arial', '', 7);
         $pdf->SetXY(8, 37);
@@ -1883,7 +1883,7 @@ class HistoriaBaseV1 extends Fpdf
     public function bodyHistoriaClinicaImagenologia($pdf){
         #IMAGEN Y DATOS EMPRESARIALES
         $pdf->SetFont('Arial', 'B', 9);
-        $logo = public_path() . "/images/logo.png";
+        $logo = public_path() . "/images/logoEcoimagen.png";
         $pdf->Image($logo, 16, 9, -220);
         $pdf->SetFont('Arial', '', 7);
         $pdf->SetXY(8, 37);

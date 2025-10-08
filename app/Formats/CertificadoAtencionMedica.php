@@ -60,7 +60,7 @@ class CertificadoAtencionMedica extends FPDF
         $this->SetTextColor(255, 192, 203);
         $this->SetTextColor(0, 0, 0);
 
-        $logo1 = public_path() . "/images/logo.png";
+        $logo1 = public_path() . "/images/logoEcoimagen.png";
         if (self::$afiliado->entidad_id === 1) {
             $logo2 = public_path() . "/images/logoFomag.png";
         } elseif (self::$afiliado->entidad_id === 3) {

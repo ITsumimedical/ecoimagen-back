@@ -29,7 +29,7 @@ class CertificadoRips extends FPDF
     {
 
 
-        $logo = public_path(). "/images/logo.png";
+        $logo = public_path(). "/images/logoEcoimagen.png";
         $this->Image($logo, 85, 7, -200);
         $this->SetFont('Arial','B',20);
         $this->SetXY(20,60);

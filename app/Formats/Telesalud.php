@@ -31,7 +31,7 @@ class Telesalud extends FPDF
         // Cambiar el tamaño del logo
         $this->SetDrawColor(0, 0, 0);
         $this->SetFont('Arial', 'B', 8);
-        $logo = public_path() . "/logo.png";
+        $logo = public_path() . "/logoEcoimagen.png";
         $this->Image($logo, 14, 10.5, 30); // Cambiar el tamaño del logo a 30 (antes estaba en -220)
 
         // Reducir el tamaño de la fuente del texto de encabezado

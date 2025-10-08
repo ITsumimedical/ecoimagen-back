@@ -55,7 +55,7 @@ class ActaNovedad extends FPDF
         $this->SetXY(0, 15.6);
         $this->SetFont('Arial', 'B', 20);
         $this->Cell(297, 6.6, utf8_decode('ACTA DE RECEPCIÓN TÉCNICA'), 0, 0, 'C');
-        $logo = public_path() . "/images/logo.png";
+        $logo = public_path() . "/images/logoEcoimagen.png";
         $this->Image($logo, 55, 7, -350);
         $this->Line(0,30,297,30);
         $this->SetXY(60, 31);

@@ -12,7 +12,7 @@
 				<table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="border: 1px solid #cccccc; border-collapse: collapse;">
 					<tr>
 						<td align="center" bgcolor="#fff" style="padding: 40px 0 30px 0; color: #153643; font-size: 28px; font-weight: bold; font-family: Arial, sans-serif;">
-							<img src="{{url('/images/logo.png')}}" alt="" width="300" height="230" style="display: block;" />
+							<img src="{{url('/images/logoEcoimagen.png')}}" alt="" width="300" height="230" style="display: block;" />
 						</td>
 					</tr>
 					<tr>

@@ -25,7 +25,7 @@ class IntructivoValidacion1552 extends FPDF
         $Y = 40;
         #IMAGEN Y DATOS EMPRESARIALES
         $pdf->SetFont('Arial', 'B', 9);
-        $logo ="/images/logo.png";
+        $logo ="/images/logoEcoimagen.png";
         $pdf->Image($logo, 13, 10, -235);
         #NIT
         $pdf->SetFont('Arial', '', 9);

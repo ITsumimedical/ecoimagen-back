@@ -33,7 +33,7 @@ class Medicamento extends Fpdf
         $this->RotatedText(12, 134, $this->marcaDeAgua, 33);
         $this->SetTextColor(0, 0, 0);
 
-        $logo1 = public_path() . "/images/logo.png";
+        $logo1 = public_path() . "/images/logoEcoimagen.png";
         $logo2 = null;
         // Si no hay logo2 personalizado, usar según entidad
         if (!$logo2) {

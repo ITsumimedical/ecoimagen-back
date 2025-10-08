@@ -47,7 +47,7 @@ class RecomendacionesCie10 extends Fpdf
         $this->SetXY(10, 10);
 
         // Logo
-        $logo = public_path() . "/images/logo.png";
+        $logo = public_path() . "/images/logoEcoimagen.png";
         $this->Image($logo, 17, 13, -370);
 
         // Info SUMIMEDICAL

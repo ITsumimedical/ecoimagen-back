@@ -34,7 +34,7 @@ class SolicitudCopiaHistoria extends FPDF
         $this->SetFont('Arial', 'B', 12);
         $this->SetXY(50, 22);
         $this->MultiCell(109, 4, utf8_decode("FORMATO ÚNICO DE SOLICITUD DE COPIA DE HISTORIA CLÍNICA"), 0, 'C');
-        $logo = public_path() . "/logo.png";
+        $logo = public_path() . "/logoEcoimagen.png";
         $this->Image($logo, 16, 14, -320);
 
         $this->SetXY(160, 14);
