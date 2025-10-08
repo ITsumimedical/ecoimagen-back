@@ -148,9 +148,9 @@ class OrdenamientoService
     private function determinarEstadoMedicamentos($parametrizacion, array $niveles, Afiliado $afiliado): int
     {
         //Si requiere MIPRES, siempre prevalece
-        // if ($parametrizacion->requiere_mipres) {
-        //     return EstadoOrdenMedicamentos::valor('REQUIERE_MIPRES');
-        // }
+        if ($parametrizacion->requiere_mipres) {
+            return EstadoOrdenMedicamentos::valor('REQUIERE_MIPRES');
+        }
 
         // Si pertenece a entidad  FOMAG
         if ($afiliado->entidad_id == 1) {
