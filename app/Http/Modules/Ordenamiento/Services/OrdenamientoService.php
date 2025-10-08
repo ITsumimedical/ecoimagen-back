@@ -161,10 +161,10 @@ class OrdenamientoService
         // }
 
         // Caso por defecto según niveles
-        $nivel = intval($parametrizacion->nivel_ordenamiento);
+        // $nivel = intval($parametrizacion->nivel_ordenamiento);
         // $maxNivel = max($niveles);
 
-        return $nivel ? EstadoOrdenMedicamentos::valor('REQUIERE_AUTORIZACION') : EstadoOrdenMedicamentos::valor('ACTIVO');
+        return 0 ? EstadoOrdenMedicamentos::valor('REQUIERE_AUTORIZACION') : EstadoOrdenMedicamentos::valor('ACTIVO');
     }
 
 
