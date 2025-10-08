@@ -153,12 +153,12 @@ class OrdenamientoService
         // }
 
         // Si pertenece a entidad  FOMAG
-        if ($afiliado->entidad_id == 1) {
-            if ($parametrizacion->requiere_autorizacion) {
-                return EstadoOrdenMedicamentos::valor('REQUIERE_AUTORIZACION');
-            }
-            return EstadoOrdenMedicamentos::valor('ACTIVO');
-        }
+        // if ($afiliado->entidad_id == 1) {
+        //     if ($parametrizacion->requiere_autorizacion) {
+        //         return EstadoOrdenMedicamentos::valor('REQUIERE_AUTORIZACION');
+        //     }
+        //     return EstadoOrdenMedicamentos::valor('ACTIVO');
+        // }
 
         // Caso por defecto según niveles
         $nivel = intval($parametrizacion->nivel_ordenamiento);
