@@ -145,7 +145,7 @@ class OrdenamientoService
      * @return int El estado determinado del medicamento.
      * @author kobatime
      */
-    private function determinarEstadoMedicamentos($parametrizacion, array $niveles, Afiliado $afiliado): int
+    private function determinarEstadoMedicamentos($parametrizacion, Afiliado $afiliado): int
     {
         //Si requiere MIPRES, siempre prevalece
         // if ($parametrizacion->requiere_mipres) {
@@ -153,18 +153,18 @@ class OrdenamientoService
         // }
 
         // Si pertenece a entidad  FOMAG
-        // if ($afiliado->entidad_id == 1) {
-        //     if ($parametrizacion->requiere_autorizacion) {
-        //         return EstadoOrdenMedicamentos::valor('REQUIERE_AUTORIZACION');
-        //     }
-        //     return EstadoOrdenMedicamentos::valor('ACTIVO');
-        // }
+        if ($afiliado->entidad_id == 1) {
+            if ($parametrizacion->requiere_autorizacion) {
+                return EstadoOrdenMedicamentos::valor('REQUIERE_AUTORIZACION');
+            }
+            return EstadoOrdenMedicamentos::valor('ACTIVO');
+        }
 
         // Caso por defecto según niveles
         $nivel = intval($parametrizacion->nivel_ordenamiento);
-        $maxNivel = max($niveles);
+        // $maxNivel = max($niveles);
 
-        return $nivel > $maxNivel ? EstadoOrdenMedicamentos::valor('REQUIERE_AUTORIZACION') : EstadoOrdenMedicamentos::valor('ACTIVO');
+        return $nivel ? EstadoOrdenMedicamentos::valor('REQUIERE_AUTORIZACION') : EstadoOrdenMedicamentos::valor('ACTIVO');
     }
 
 
@@ -208,7 +208,7 @@ class OrdenamientoService
      * @return void
      * @author kobatime
      */
-    private function procesarArticulos(Orden $orden, array $articulos, int $mesActual, array $niveles, Afiliado $afiliado, int $idConsulta): void
+    private function procesarArticulos(Orden $orden, array $articulos, int $mesActual, Afiliado $afiliado, int $idConsulta): void
     {
 
         $codesumiIds = array_column(array_column($articulos, 'articulo'), 'codesumi_id');
@@ -234,7 +234,7 @@ class OrdenamientoService
 
             // Determinar estado del artículo
             $parametrizacion = $parametrizaciones[$codesumiId] ?? null;
-            $estado = $this->determinarEstadoMedicamentos($parametrizacion, $niveles, $afiliado);
+            $estado = $this->determinarEstadoMedicamentos($parametrizacion, $afiliado);
 
             // Calcular fecha vigencia (la hereda de la orden)
             $fechaVigencia = $orden->fecha_vigencia;
@@ -266,7 +266,7 @@ class OrdenamientoService
 
     public function generarOrden(int $idConsulta, $tipo, $request)
     {
-        $niveles = auth()->user()->getNivelesOrdenamiento();
+        // $niveles = auth()->user()->getNivelesOrdenamiento();
         switch (intval($tipo)) {
             case 1:
                 $mayorMes = max(array_column($request, 'meses'));
@@ -279,14 +279,14 @@ class OrdenamientoService
                     throw new \Exception("El afiliado con ID {$consulta->afiliado_id} no fue encontrado.");
                 }
 
-                DB::transaction(function () use ($request, $idConsulta, $mayorMes, $niveles, $afiliado) {
+                DB::transaction(function () use ($request, $idConsulta, $mayorMes, $afiliado) {
                     $this->validarCantidades($request);
 
                     $siguienteVigencia = Carbon::now()->format('Y-m-d');
 
                     for ($i = 1; $i <= $mayorMes; $i++) {
                         $orden = $this->crearOrdenMedicamento($idConsulta, $i, $mayorMes, $siguienteVigencia);
-                        $this->procesarArticulos($orden, $request, $i, $niveles, $afiliado, $idConsulta);
+                        $this->procesarArticulos($orden, $request, $i, $afiliado, $idConsulta);
                         $siguienteVigencia = Carbon::parse($orden->fecha_vigencia)->addDays(28)->format('Y-m-d');
                     }
                 });
@@ -304,7 +304,7 @@ class OrdenamientoService
 
                 $this->validacionesServicio($request, $consulta->afiliado);
                 $nuevaOrden = $this->crearOrden($idConsulta);
-                $nuevoProcedimiento = $this->procesarProcedimientos($nuevaOrden, $consulta->afiliado, $request, $niveles);
+                $nuevoProcedimiento = $this->procesarProcedimientos($nuevaOrden, $consulta->afiliado, $request);
                 EnvioOrdenFomag::dispatch($nuevaOrden, Auth::id())
                     ->onQueue('interoperabilidad');
 
@@ -584,7 +584,7 @@ class OrdenamientoService
         return ['valido' => true, 'mensaje' => ''];
     }
 
-    protected function procesarProcedimientos($nuevaOrden, $afiliado, $procedimientos, $niveles)
+    protected function procesarProcedimientos($nuevaOrden, $afiliado, $procedimientos)
     {
         foreach ($procedimientos as $procedimiento) {
             $cup = $this->cupRepository->consultarCupEntidad($procedimiento['procedimiento']['id'], $afiliado['entidad_id']);
@@ -597,7 +597,7 @@ class OrdenamientoService
                 throw new \Exception('Cantidad no permitida para el cup ' . $cup->cup->nombre . '. Máxima: ' . $cup->cantidad_max_ordenamiento);
             }
 
-            $nuevoProcedimiento = $this->crearOrdenProcedimiento($nuevaOrden, $cup, $procedimiento, $niveles);
+            $nuevoProcedimiento = $this->crearOrdenProcedimiento($nuevaOrden, $cup, $procedimiento);
             $direccionamiento = $this->direccionamientoService->direccionamientoOrdenes($nuevoProcedimiento, $procedimiento['rep']['id']);
             $nuevoProcedimiento->rep_id = $direccionamiento ? $direccionamiento->direccionamiento_id : null;
             $nuevoProcedimiento->save();
@@ -608,7 +608,7 @@ class OrdenamientoService
         return true;
     }
 
-    protected function crearOrdenProcedimiento($orden, $cup, $data, $niveles)
+    protected function crearOrdenProcedimiento($orden, $cup, $data)
     {
         return new OrdenProcedimiento([
             'orden_id' => $orden->id,
@@ -616,7 +616,7 @@ class OrdenamientoService
             'cantidad' => $data['cantidad'],
             'fecha_vigencia' => $data['fechaVigencia'],
             'observacion' => $data['observacion'],
-            'estado_id' => $this->determinarEstado($cup, $niveles),
+            'estado_id' => $this->determinarEstado($cup),
             'estado_id_gestion_prestador' => 50,
         ]);
     }
@@ -634,9 +634,9 @@ class OrdenamientoService
         return $nuevaOrden;
     }
 
-    protected function determinarEstado($cup, $niveles)
+    protected function determinarEstado($cup)
     {
-        if ($cup->requiere_auditoria == 1 || intval($cup->nivel_ordenamiento) > max($niveles)) {
+        if ($cup->requiere_auditoria == 1 || intval($cup->nivel_ordenamiento) > 0) {
             return 3;
         }
         return 1;

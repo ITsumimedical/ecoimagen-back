@@ -170,7 +170,7 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
-    public function getNivelesOrdenamiento(): array
+    public function getNivelesOrdenamiento()
     {
         $niveles = [0];
 
